@@ -15,7 +15,7 @@ import (
 )
 
 func main() {
-	commandName := "seqre"
+	commandName := "sqre"
 
 	// Declare command flags
 	editor := flag.String("e", "emacs", "The text editor used to open the path paste file.") // (Must be a GUI program)
