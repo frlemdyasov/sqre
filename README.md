@@ -1,16 +1,26 @@
 # Sequence Renamer
-Version 1.1 
+Version 1.2
 
 Inspired by [renameutils](https://www.nongnu.org/renameutils/), sqre is a bulk renaming tool that prioritizes speed and convenience.
 
 > [!NOTE]
 > This program was designed for my own personal use case, so alternate functionality may not be added. 
 
+## Features
+- Use any GUI text editor to select the files
+- Sequentially rename files in order of: Name, Modification date, Size
+- Specify a new location to place the renamed files (Currently selecting a location in a different drive is not implimented)
+- Set a custom name for the ordered files
+- Change the sequence labels to have similar digit lengths by adding zeros in front of small numbers
+
+
+
 ## The Workflow
+Highlight + Copy -> Run sqre -> Paste + Save + Exit -> Done
+
 In your file manager, highlight and copy a series of files -> Run sqre -> Paste the file paths into the text editor, save and exit -> Renamed files appear in their original directory.
 
-This distills down to:  
-Highlight + Copy -> Run sqre -> Paste + Save + Exit -> Done
+
 
 ## Building
 1. Download the repository as a .zip file
@@ -27,4 +37,4 @@ Find all of the other flags by running: `./sqre -h`
 
 ## Requirements
 - Go
-- Emacs
+- Emacs (For now)
