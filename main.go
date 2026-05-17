@@ -6,6 +6,8 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"io"
+	"io/fs"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -19,6 +21,7 @@ func main() {
 
 	// Declare command flags
 	editor := flag.String("e", "emacs", "The text editor used to open the path paste file.") // (Must be a GUI program)
+	location := flag.String("l", ".", "The directory the renamed files will be placed in.")
 	order := flag.String("o", "date", "Order the files will be renamed in. Either: name, date, or size")
 	name := flag.String("n", "", "Specify a custom name for the renamed files. Leaving this flag empty defaults to using the name of the first file in the order.")
 	zeroes := flag.Bool("z", false, "Make all the numbers the same length by adding zeroes in front of smaller numbers")
@@ -32,6 +35,7 @@ func main() {
 		fmt.Println("")
 		fmt.Println("List of options:")
 		fmt.Println("  -e [EDITOR] \t \t The text editor used to open the path paste file.")
+		fmt.Println("  -l [LOCATION] \t The directory the renamed files will be placed in.")
 		fmt.Println("  -o [ORDER] \t \t Order the files will be renamed in. Either: name, date, or size")
 		fmt.Println("  -n [NAME] \t \t Specify a custom name for the renamed files. Otherwise use the name of the first file in the order.")
 		fmt.Println("  -z \t \t \t Make all the numbers the same length by adding zeroes in front of smaller numbers")
@@ -41,16 +45,16 @@ func main() {
 		os.Exit(0)
 	}
 
-	// Check if the version flag is used, if so, exit the program
-	if *version == true {
-		fmt.Println(commandName + " version: 1.1")
-		os.Exit(0)
-	}
-
-	// Check if the right order flag is used, if not exit the program
+	// Check if the order flag is used, if not exit the program
 	if *order != "name" && *order != "date" && *order != "size" {
 		fmt.Println("Error:", errors.New("Order of files not specified"))
 		os.Exit(1)
+	}
+
+	// Check if the version flag is used, if so, exit the program
+	if *version == true {
+		fmt.Println(commandName + " version: 1.2")
+		os.Exit(0)
 	}
 
 	// Create the text file that you paste in the image paths
@@ -73,33 +77,37 @@ func main() {
 		fmt.Println("Error:", errors.New("Unable to read the contents of the pasteFile."))
 	}
 
+	// Remove temporary pasteFile
+	err = os.Remove(pasteFile.Name())
+	if err != nil {
+		fmt.Println("Couldn't remove temporary text file")
+	}
+
 	// Convert each line of the pasteFile into a list value
 	filePaths := strings.Split(string(input), "\n")
 
-	// Create the working directory
-	workingFolder, err := os.MkdirTemp("", "sequenceRenamerImages")
-	if err != nil {
-		fmt.Println("Error:", errors.New("Unable to make the working directory."))
-	}
-
-	// Move the desired files into the working directory
-	for i := range len(filePaths) {
-		err = os.Rename(filePaths[i], workingFolder+"/"+filepath.Base(filePaths[i]))
-		if err != nil {
-			fmt.Println("Error:", errors.New("Unable to move files to working directory."))
-		}
-	}
-
-	// Detect the files in the working directory
-	entries, err := os.ReadDir(workingFolder)
-	if err != nil {
-		fmt.Println("Error:", errors.New("Failed to read the working directory."))
-	}
-
-	// Copy the original path of the first selected file before entries is sorted
+	// Copy the original path of the first selected file before entries is sorted, and before the first file operation
 	originalPath := filePaths[0][0 : len(filePaths[0])-len(filepath.Base(filePaths[0]))]
-	fmt.Println(originalPath)
 
+	// Check if the location flag is used
+	var newPath string
+	if *location == "." {
+		newPath = originalPath
+	} else {
+		newPath = *location
+	}
+
+	// Read each file's info
+	var entries []fs.FileInfo
+	for i := range filePaths {
+		fileInfo, err := os.Stat(filePaths[i])
+		if err != nil {
+			fmt.Println("Error:", errors.New("Failed to read the file info."))
+		}
+		entries = append(entries, fileInfo)
+	}
+
+	// sort the files depending on chosen flag
 	switch *order {
 	case "name":
 		sort.SliceStable(entries, func(i, j int) bool {
@@ -107,14 +115,14 @@ func main() {
 		})
 	case "date":
 		sort.SliceStable(entries, func(i, j int) bool {
-			entryI, _ := entries[i].Info()
-			entryJ, _ := entries[j].Info()
+			entryI := entries[i]
+			entryJ := entries[j]
 			return entryI.ModTime().Before(entryJ.ModTime())
 		})
 	case "size":
 		sort.SliceStable(entries, func(i, j int) bool {
-			entryI, _ := entries[i].Info()
-			entryJ, _ := entries[j].Info()
+			entryI := entries[i]
+			entryJ := entries[j]
 			return entryI.Size() < entryJ.Size()
 		})
 	}
@@ -139,11 +147,12 @@ func main() {
 			addZeroes = ""
 		}
 
-		newName := originalPath + firstFileExtentionlessName + addZeroes + strconv.Itoa(i+1) + fileExtension
-		fmt.Println(workingFolder + entries[i].Name())
-		fmt.Println(newName)
+		newName := newPath + firstFileExtentionlessName + addZeroes + strconv.Itoa(i+1) + fileExtension
 
-		os.Rename(workingFolder+"/"+entries[i].Name(), newName)
+		err = os.Rename(originalPath+"/"+entries[i].Name(), newName)
+		if err != nil {
+			fmt.Println("Error:", errors.New("Unable to move files from working directory."))
+		}
 
 	}
 
@@ -156,4 +165,40 @@ func countZeroes(num int, tot int) string {
 		zeroes = zeroes + "0"
 	}
 	return zeroes
+}
+
+// https://stackoverflow.com/questions/50740902/move-a-file-to-a-different-drive-with-go
+func MoveFile(sourcePath, destPath string) error {
+	inputFile, err := os.Open(sourcePath)
+	if err != nil {
+		return fmt.Errorf("Couldn't open source file: %v", err)
+	}
+	defer inputFile.Close()
+
+	// https://www.programmershelp.net/go/tutorial-on-copying-files-in-go.php
+	fileInfo, err := inputFile.Stat()
+	if err != nil {
+		return fmt.Errorf("failed to get file info: %w", err)
+	}
+	fmt.Println(fileInfo.Mode())
+
+	outputFile, err := os.OpenFile(destPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, fileInfo.Mode())
+	if err != nil {
+		return fmt.Errorf("Couldn't open dest file: %v", err)
+	}
+	defer outputFile.Close()
+
+	_, err = io.Copy(outputFile, inputFile)
+	if err != nil {
+		return fmt.Errorf("Couldn't copy to dest from source: %v", err)
+	}
+
+	inputFile.Close() // for Windows, close before trying to remove: https://stackoverflow.com/a/64943554/246801
+
+	err = os.Remove(sourcePath)
+	if err != nil {
+		return fmt.Errorf("Couldn't remove source files: %v", err)
+	}
+
+	return nil
 }
