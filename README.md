@@ -3,6 +3,8 @@ Version 1.2
 
 Inspired by [renameutils](https://www.nongnu.org/renameutils/), sqre is a bulk renaming tool that prioritizes speed and convenience.
 
+![](https://github.com/frlemdyasov/sqre/blob/main/sqreDemonstration.gif)
+
 > [!NOTE]
 > This program was designed for my own personal use case, so alternate functionality may not be added. 
 
@@ -17,10 +19,6 @@ Inspired by [renameutils](https://www.nongnu.org/renameutils/), sqre is a bulk r
 
 ## The Workflow
 Highlight + Copy -> Run sqre -> Paste + Save + Exit -> Done
-
-In your file manager, highlight and copy a series of files -> Run sqre -> Paste the file paths into the text editor, save and exit -> Renamed files appear in their original directory.
-
-
 
 ## Building
 1. Download the repository as a .zip file
