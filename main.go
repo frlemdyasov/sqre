@@ -41,6 +41,7 @@ func main() {
 		fmt.Println("  -z \t \t \t Make all the numbers the same length by adding zeroes in front of smaller numbers")
 		fmt.Println("  -v \t \t \t Print the version number of the program")
 		fmt.Println("  -h \t \t \t Print the usage information for this program")
+		fmt.Println("\n Example: \n sqre -e gedit -l ~Downloads")
 
 		os.Exit(0)
 	}
@@ -61,6 +62,7 @@ func main() {
 	pasteFile, err := os.CreateTemp("", "sequenceRenamerPasteFile")
 	if err != nil {
 		fmt.Println("Error:", errors.New("Unable to make pasteFile."))
+		os.Exit(1)
 	}
 
 	// Open the pasteFile with the selected editor
@@ -69,6 +71,7 @@ func main() {
 	if err != nil {
 		fmt.Println("Error:", errors.New("Text Editor failed to run."))
 		fmt.Println("Make sure the editor does not run in a terminal.")
+		os.Exit(1)
 	}
 
 	// Read the contents of the pasteFile
@@ -80,7 +83,8 @@ func main() {
 	// Remove temporary pasteFile
 	err = os.Remove(pasteFile.Name())
 	if err != nil {
-		fmt.Println("Couldn't remove temporary text file")
+		fmt.Println("Error:", errors.New("Couldn't remove temporary text file"))
+		os.Exit(1)
 	}
 
 	// Convert each line of the pasteFile into a list value
@@ -94,7 +98,17 @@ func main() {
 	if *location == "." {
 		newPath = originalPath
 	} else {
-		newPath = *location
+		ex, err := os.Executable()
+		if err != nil {
+			fmt.Println("Error:", errors.New("Failed to determine executable location"))
+			os.Exit(1)
+		}
+		var slash rune = '/'
+		if a := []rune(ex); a[0] == slash {
+			newPath = *location
+		} else {
+			newPath = filepath.Dir(ex) + *location
+		}
 	}
 
 	// Read each file's info
@@ -151,7 +165,9 @@ func main() {
 
 		err = os.Rename(originalPath+"/"+entries[i].Name(), newName)
 		if err != nil {
-			fmt.Println("Error:", errors.New("Unable to move files from working directory."))
+			fmt.Println("Error:", errors.New("Unable to move files into the directory:"))
+			fmt.Println(newPath)
+			os.Exit(1)
 		}
 
 	}
