@@ -18,6 +18,7 @@ import (
 
 func main() {
 	commandName := "sqre"
+	versionNumber := "1.3"
 
 	// Declare command flags
 	editor := flag.String("e", "emacs", "The text editor used to open the path paste file.") // (Must be a GUI program)
@@ -31,8 +32,7 @@ func main() {
 
 	// Check if the help flag is being used, if so, exit the program
 	if *help == true {
-		fmt.Println("Usage: " + commandName + " [OPTIONS]...")
-		fmt.Println("")
+		fmt.Println("Usage: " + commandName + " [OPTIONS]...\n")
 		fmt.Println("List of options:")
 		fmt.Println("  -e [EDITOR] \t \t The text editor used to open the path paste file.")
 		fmt.Println("  -l [LOCATION] \t The directory the renamed files will be placed in.")
@@ -54,10 +54,11 @@ func main() {
 
 	// Check if the version flag is used, if so, exit the program
 	if *version == true {
-		fmt.Println(commandName + " version: 1.2")
+		fmt.Println(commandName+" version: ", versionNumber)
 		os.Exit(0)
 	}
 
+	var filePaths []string
 	// Create the text file that you paste in the image paths
 	pasteFile, err := os.CreateTemp("", "sequenceRenamerPasteFile")
 	if err != nil {
@@ -88,9 +89,9 @@ func main() {
 	}
 
 	// Convert each line of the pasteFile into a list value
-	filePaths := strings.Split(string(input), "\n")
+	filePaths = strings.Split(string(input), "\n")
 
-	// Copy the original path of the first selected file before entries is sorted, and before the first file operation
+	// Copy the original path of the first selected file before entries are sorted, and before the first file operation
 	originalPath := filePaths[0][0 : len(filePaths[0])-len(filepath.Base(filePaths[0]))]
 
 	// Check if the location flag is used
@@ -152,6 +153,7 @@ func main() {
 	// Write a number at the end of the name denoting its order in the sequence.
 	// Renaming also changes the path of the file, back to its original location
 	var addZeroes string
+	newName := make([]string, len(entries))
 	for i := range entries {
 		fileExtension := filepath.Ext(entries[i].Name())
 
@@ -161,14 +163,16 @@ func main() {
 			addZeroes = ""
 		}
 
-		newName := newPath + firstFileExtentionlessName + addZeroes + strconv.Itoa(i+1) + fileExtension
+		newName[i] = newPath + firstFileExtentionlessName + addZeroes + strconv.Itoa(i+1) + fileExtension
 
-		err = os.Rename(originalPath+"/"+entries[i].Name(), newName)
+		err := os.Rename(originalPath+"/"+entries[i].Name(), newName[i])
 		if err != nil {
 			fmt.Println("Error:", errors.New("Unable to move files into the directory:"))
 			fmt.Println(newPath)
 			os.Exit(1)
 		}
+
+		fmt.Println(entries[i].Name(), "->", newName[i])
 
 	}
 
