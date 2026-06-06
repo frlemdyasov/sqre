@@ -30,9 +30,11 @@ CLI: Highlight + Copy -> Run sqre -> Paste + Save + Exit -> Done
 4. Run `go build .`
 
 ## Usage
-Running `./sqre` will open an emacs window. Highlight several files from your GUI file manager, and paste them into emacs. Then save and exit emacs.
+GUI: Run `./sqre` and a persistant window will open. Highlight several files from your GUI file manager, and paste them into the text box. Then press the rename button.
 
-Change the default text editor using the -e flag. (Ex: `./sqre -cli -n gedit`)
+TUI: Running `./sqre -cli` will open an emacs window by default. Highlight several files from your GUI file manager, and paste them into emacs. Then save and exit emacs.
+
+Change the default text editor using the -e flag. (Ex: `./sqre -cli -e gedit`)
 
 Find all of the other flags by running: `./sqre -h`
 
