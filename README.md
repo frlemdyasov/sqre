@@ -1,38 +1,40 @@
 # Sequence Renamer
-Version 1.2
+Version 2.0
 
 Inspired by [renameutils](https://www.nongnu.org/renameutils/), sqre is a bulk renaming tool that prioritizes speed and convenience.
 
-![](https://github.com/frlemdyasov/sqre/blob/main/sqreDemonstration.gif)
+![](https://github.com/frlemdyasov/sqre/blob/main/sqreScreenshot.png)
 
 > [!NOTE]
 > This program was designed for my own personal use case, so alternate functionality may not be added. 
 
 ## Features
-- Use any GUI text editor to select the files
 - Sequentially rename files in order of: Name, Modification date, Size
-- Specify a new location to place the renamed files (Currently selecting a location in a different drive is not implimented)
 - Set a custom name for the ordered files
 - Change the sequence labels to have similar digit lengths by adding zeros in front of small numbers
+- Insert clipboard with convenient button
+- The CLI can additionally:
+  - Specify output location (within the same partition/drive)
 
 
 
 ## The Workflow
-Highlight + Copy -> Run sqre -> Paste + Save + Exit -> Done
+GUI: Highlight + Copy -> Paste + Rename -> Done
+
+CLI: Highlight + Copy -> Run sqre -> Paste + Save + Exit -> Done
 
 ## Building
 1. Download the repository as a .zip file
 2. Extract the file using, `7z x sqre-main`, for example
 3. Move into the working directory: `cd sqre-main`
-4. Run `go build`
+4. Run `go build .`
 
 ## Usage
 Running `./sqre` will open an emacs window. Highlight several files from your GUI file manager, and paste them into emacs. Then save and exit emacs.
 
-Change the default text editor using the -e flag. (Ex: `./sqre -n gedit`)
+Change the default text editor using the -e flag. (Ex: `./sqre -cli -n gedit`)
 
 Find all of the other flags by running: `./sqre -h`
 
 ## Requirements
-- Go
-- Emacs (For now)
+- Go (version 1.25.9 was tested as working)

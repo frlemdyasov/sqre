@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <object class="GtkWindow" id="MainWindow">
+    <property name="title" translatable="1">Sequence Renamer</property>
+    <property name="default-width">480</property>
+    <property name="default-height">300</property>
+    <property name="child">
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkBox">
+	    <property name="spacing">5</property>
+            <child>
+              <object class="GtkCheckButton" id="AddZeroesCheck">
+                <property name="label" translatable="1">Zeroes</property>
+                <property name="focusable">1</property>
+                <property name="tooltip-text" translatable="1">Add zeroes in front of the sequence number to make equal filename lengths.</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkSeparator"/>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="tooltip-text" translatable="1">Set the order of the sequence.</property>
+                <property name="label" translatable="1">Order:</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkDropDown" id="OrderByChooser">
+                <property name="model">
+		  <object class="GtkStringList">
+                    <items>
+                      <item translatable="yes">Date</item>
+                      <item translatable="yes">Name</item>
+                      <item translatable="yes">Size</item>
+                    </items>
+		  </object>
+		</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkSeparator"/>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="tooltip-text" translatable="1">Set a custom filename.
+Leave empty to use the first name in the sequence. </property>
+                <property name="label" translatable="1">Name:</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkEntry" id="FileNamer">
+                <property name="focusable">1</property>
+              </object>
+            </child>
+	    <child>
+              <object class="GtkSeparator"/>
+            </child>
+	    <child>
+          <object class="GtkButton" id="pasteButon">
+            <property name="focusable">1</property>
+            <property name="receives-default">1</property>
+	    <property name="icon-name">edit-paste-symbolic</property>
+	    <property name="tooltip-text" translatable="1">Paste the text contents of the clipboard. </property>
+          </object>
+        </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkTextView" id="TextInput">
+            <property name="vexpand">1</property>
+            <property name="focusable">1</property>
+            <property name="wrap-mode">char</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton" id="RenameButton">
+            <property name="label" translatable="1">Rename</property>
+            <property name="focusable">1</property>
+            <property name="receives-default">1</property>
+          </object>
+        </child>
+      </object>
+    </property>
+  </object>
+</interface>
