@@ -24,10 +24,11 @@ GUI: Highlight + Copy -> Paste + Rename -> Done
 CLI: Highlight + Copy -> Run sqre -> Paste + Save + Exit -> Done
 
 ## Building
-1. Download the repository as a .zip file
-2. Extract the file using, `7z x sqre-main`, for example
-3. Move into the working directory: `cd sqre-main`
-4. Run `go build .`
+If running Nix with nix-command and flake options enabled: 
+	1. Run: `nix develop`
+	2. Run: `go build .`
+	
+If not using Nix, the just run `go build` and hope you have the dependencies installed.
 
 ## Usage
 GUI: Run `./sqre` and a persistant window will open. Highlight several files from your GUI file manager, and paste them into the text box. Then press the rename button.
@@ -38,5 +39,3 @@ Change the default text editor using the -e flag. (Ex: `./sqre -cli -e gedit`)
 
 Find all of the other flags by running: `./sqre -h`
 
-## Requirements
-- Go (version 1.25.9 was tested as working)
