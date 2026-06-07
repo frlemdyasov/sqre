@@ -25,8 +25,8 @@ CLI: Highlight + Copy -> Run sqre -> Paste + Save + Exit -> Done
 
 ## Building
 If running Nix with nix-command and flake options enabled: 
-	1. Run: `nix develop`
-	2. Run: `go build .`
+1. Run: `nix develop`
+2. Run: `go build .`
 	
 If not using Nix, the just run `go build` and hope you have the dependencies installed.
 
