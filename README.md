@@ -23,12 +23,12 @@ GUI: Highlight + Copy -> Paste + Rename -> Done
 
 CLI: Highlight + Copy -> Run sqre -> Paste + Save + Exit -> Done
 
-## Building
-If running Nix with nix-command and flake options enabled: 
+## Building From Source
+Nix with flakes enabled is required: 
 1. Run: `nix develop`
 2. Run: `go build .`
 	
-If not using Nix, the just run `go build` and hope you have the dependencies installed.
+If not using Nix, the just run `go build .` and hope you have the dependencies installed.
 
 ## Usage
 GUI: Run `./sqre` and a persistant window will open. Highlight several files from your GUI file manager, and paste them into the text box. Then press the rename button.
