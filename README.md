@@ -8,6 +8,8 @@ Inspired by [renameutils](https://www.nongnu.org/renameutils/), sqre is a bulk r
 > [!NOTE]
 > This program was designed for my own personal use case, so alternate functionality may not be added. 
 
+No AI was used at any stage of development.
+
 ## Features
 - Sequentially rename files in order of: Name, Modification date, Size
 - Set a custom name for the ordered files
